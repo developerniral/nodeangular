@@ -2,12 +2,16 @@ import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
+import { HttpClientModule, provideHttpClient, withFetch} from '@angular/common/http';
 import { AppComponent } from './app.component';
+import { UserModule } from './components/user/user.module';
+import { RouterModule } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { EmployeeFormComponent } from './employee-form/employee-form.component';
+
 
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -49,6 +53,7 @@ import { MatListModule } from '@angular/material/list';
   ],
   providers: [
     provideClientHydration(withEventReplay()),
+    provideHttpClient(withFetch()),
     provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
