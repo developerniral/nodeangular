@@ -1,1 +1,30 @@
-<p>user-create works!</p>
+<div class="form-container">
+    <form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
+      <label>
+        Name:
+        <input type="text" formControlName="name" />
+      </label>
+      <div *ngIf="dataForm.controls['name'].invalid && dataForm.controls['name'].touched">
+        Name is required.
+      </div>
+  
+      <label>
+        Email:
+        <input type="email" formControlName="email" />
+      </label>
+      <div *ngIf="dataForm.controls['email'].invalid && dataForm.controls['email'].touched">
+        Valid email is required.
+      </div>
+  
+      <label>
+        Phone:
+        <input type="text" formControlName="phone" />
+      </label>
+      <div *ngIf="dataForm.controls['phone'].invalid && dataForm.controls['phone'].touched">
+        Valid 10-digit phone number is required.
+      </div>
+  
+      <button type="submit" [disabled]="dataForm.invalid">Submit</button>
+    </form>
+  </div>
+  

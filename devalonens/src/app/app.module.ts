@@ -3,7 +3,10 @@ import { BrowserModule, provideClientHydration, withEventReplay } from '@angular
 
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule, provideHttpClient, withFetch} from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+
 import { AppComponent } from './app.component';
+
 import { UserModule } from './components/user/user.module';
 import { RouterModule } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -49,7 +52,8 @@ import { MatListModule } from '@angular/material/list';
     MatIconModule,
     MatListModule,
     MatTableModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ReactiveFormsModule
   ],
   providers: [
     provideClientHydration(withEventReplay()),

@@ -14,4 +14,9 @@ export class StaffService {
     const url: string = `users`;
     return this._dataService.getRequest(url, {});
   }
+
+  public saveStaff(params: any): Observable<any> {
+    const url: string = `users`;
+    return this._dataService.postRequest(url, params);
+  }
 }

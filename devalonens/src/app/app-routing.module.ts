@@ -9,6 +9,8 @@ import { StaffComponent } from './components/staff/staff.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'user', loadChildren: () => import('./components/user/user.module').then(m => m.UserModule)},
+
   { path: 'about', component: AboutComponent },
   { path: 'staff', component: StaffComponent },
   { path: 'employees', component: EmployeeListComponent },
