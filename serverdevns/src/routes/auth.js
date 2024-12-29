@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { createErrorResponse, createSuccessResponse } = require('../utility/responseHandler');
+const User = require('../models/User');
 
 const router = express.Router();
 
@@ -45,9 +46,9 @@ router.post('/login', async (req, res) => {
   }
 
   // Check user existence
-  const user = users.find(user => user.email === email);
+  const user = await User.findOne({ email });
   if (!user) {
-    return res.status(400).json(createErrorResponse('Invalid credentials'));
+    return res.status(400).json(createErrorResponse('User not found'));
   }
 
   // Verify password
