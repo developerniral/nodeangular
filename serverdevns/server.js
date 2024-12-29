@@ -10,22 +10,19 @@ const path = require('path');
 var cors = require('cors');
 const fs = require('fs');
 
-const errorLogger = require('./src/log')
-
-const dbUtililty = require('./src/utility');
+const authRoutes = require('./src/routes/auth');
 const userRoutes = require('./src/routes/users');
 
-const activeClients = new Map();
-const dashboardSocketIds = [];
 
 const port = process.env.NODE_SERVER_PORT;
-
+console.log(port);
 app.use(express.json());
-
 //app.use('/env/server', express.static(__dirname + '/env/server', { 'extensions': ['js'] }));
 app.use(cors());
 app.get('/', function (req, res) {
-    console.log('Server is running');
+    console.log('Home page Server is running');
+    res.status(200).json({ success: true, message: 'ok' });
+
     //res.sendFile(path.join(__dirname, 'index.html'));
 });
 
@@ -39,15 +36,16 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-
-
-
-
-
 
 
 
 http.listen(port, function () {
     console.log(`Server ready on http://localhost:${port} port`);
 });
+
+
+
+
+

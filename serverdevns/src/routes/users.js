@@ -1,10 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const { body, validationResult } = require('express-validator');
+const { handleValidationErrors } = require('../utility/validatorHandle');
+
+
 const User = require('./../models/User');
+const { createErrorResponse, createSuccessResponse } = require('../utility/responseHandler');
+const authMiddleware = require('../middleware/authMiddleware');
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware,async (req, res) => {
   try {
-
+    
     const users = await User.findAll({
 
       attributes: ['id', 'email','name'],
@@ -16,53 +22,54 @@ router.get('/', async (req, res) => {
             
       
     }
-    res.status(200).json({ success: true, message: 'ok', data: users });
+    res.status(200).json(createSuccessResponse(users));
     
   } catch (error) {
     //errorLogger.error(JSON.stringify(errorMessage));
-    res.status(500).json({ message: error.message });
+    res.status(500).json(createErrorResponse(error.message));
   }
 });
 
 
 // Get a user by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id',authMiddleware, async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
-    res.status(200).json({ success: true, message: 'ok', data: user });
+    res.status(200).json(createSuccessResponse(user));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json(createErrorResponse(error.message));
   }
 });
 
 // Update a user
-router.put('/:id', async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const { name, email } = req.body;
     const [updated] = await User.update({ name, email }, { where: { id: req.params.id } });
     if (!updated) return res.status(404).json({ message: 'User not found' });
     const user = await User.findByPk(req.params.id);
-    res.status(200).json({ success: true, message: 'ok', data: user });
+    res.status(200).json(createSuccessResponse(user));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json(createErrorResponse(error.message));
   }
 });
 
 // Delete a user
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',authMiddleware, async (req, res) => {
   try {
     const deleted = await User.destroy({ where: { id: req.params.id } });
     if (!deleted) return res.status(404).json({ message: 'User not found' });
-    res.status(200).json({ success: true, message: 'Deleted Successful' });
+    res.status(200).json(createSuccessResponse(null,'Deleted Successful'));
     //res.status(204).send();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json(createErrorResponse(error.message));
   }
 });
 
 router.post(
   '/',
+  authMiddleware,
   [
     // Validation rules
     body('name')
@@ -88,24 +95,25 @@ router.post(
       }),
   ],
   async (req, res) => {
-    const errors = validationResult(req);
+    
+    const validationErrors = handleValidationErrors(req);
 
     // If validation fails, return errors
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    if (validationErrors) {
+      return res.status(400).json(createErrorResponse( validationErrors ));
     }
+
 
     try {
       // Create user
       const { name, email } = req.body;
       const user = await User.create({ name, email });
 
-      res.status(201).json(user); // Respond with created user
+      res.status(201).json(createSuccessResponse(user)); // Respond with created user
     } catch (error) {
-      res.status(500).json({ message: 'Server Error', error: error.message });
+      res.status(500).json(createErrorResponse( error.message));
     }
   }
 );
-
 
 module.exports = router;
