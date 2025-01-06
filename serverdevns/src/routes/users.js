@@ -10,19 +10,36 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 router.get('/', authMiddleware,async (req, res) => {
   try {
+    const { page = 1, limit = 10, name, email } = req.query;
+    const where = {};
+    if (name) where.name = name;
+    if (email) where.email = email;
+
     
     const users = await User.findAll({
 
       attributes: ['id', 'email','name'],
-      //where:{}
+      where,
+      limit: parseInt(limit),
+      offset: (page - 1) * limit
+      
     }
     );
 
+    console.log('Query:', where);
+    console.log('Count:', users);
     if (users) {
             
       
     }
-    res.status(200).json(createSuccessResponse(users));
+
+    let data = {
+      user : users,
+      totalItems: users.count,
+      totalPages: Math.ceil(users.count / limit),
+      currentPage: parseInt(page),
+    }
+    res.status(200).json(createSuccessResponse(data));
     
   } catch (error) {
     //errorLogger.error(JSON.stringify(errorMessage));
